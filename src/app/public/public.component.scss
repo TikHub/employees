@@ -1,5 +1,16 @@
 :host {
-  .wrapper {
+  a {
+    text-decoration: none;
+    &:focus,
+    &:link,
+    &:visited,
+    &:hover,
+    &:active {
+      color: #fff;
+    }
+  }
+  .content {
+    min-height: calc(100vh - 128px);
     max-width: 1200px;
     margin-left: auto;
     margin-right: auto;

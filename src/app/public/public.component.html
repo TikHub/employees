@@ -1,19 +1,5 @@
-<div class="wrapper">
-  <mat-toolbar color="primary" class="header">
-    <mat-toolbar-row>
-      <span class="menu-spacer"></span>
-      <button mat-button>
-        <mat-icon>list</mat-icon>
-        <a [routerLink]="'/employees'"> Employees </a>
-      </button>
-    </mat-toolbar-row>
-  </mat-toolbar>
-  <div class="content">
-    <router-outlet></router-outlet>
-  </div>
-  <mat-toolbar color="primary" class="footer">
-    <mat-toolbar-row>
-      <p class="copyright">All right reserved &copy;</p>
-    </mat-toolbar-row>
-  </mat-toolbar>
+<div class="header"></div>
+<div class="content">
+  <router-outlet></router-outlet>
 </div>
+<div class="footer"></div>

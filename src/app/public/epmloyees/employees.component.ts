@@ -64,7 +64,7 @@ export class EmployeesComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit() {
     this.setPageMode();
-    this.employeesService.getEmployees().subscribe((response: Employee[]) => {
+    this.employeesService.employees$.subscribe((response: Employee[]) => {
       this.dataSource = new MatTableDataSource(response);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.matSort;
@@ -77,7 +77,7 @@ export class EmployeesComponent implements OnInit, OnDestroy, AfterViewInit {
         this.getDetailsData();
         break;
     }
-    this.employeesService.list
+    this.employeesService.employees$
       .pipe(takeUntil(this.destroy$))
       .subscribe((res) => {
         this.dataSource = new MatTableDataSource(res);
@@ -135,7 +135,7 @@ export class EmployeesComponent implements OnInit, OnDestroy, AfterViewInit {
         tap((params) => {
           // strictNullChecks
           // this.selectedEmployeeId = +params.get('id');
-          this.selectedEmployeeId = parseInt(params.get('id') as string);
+          this.selectedEmployeeId = +(<string>params.get('id'));
         }),
         // switchMapTo
         switchMap(() => {
@@ -263,7 +263,6 @@ export class EmployeesComponent implements OnInit, OnDestroy, AfterViewInit {
           return 0;
       }
     });
-    // this.employeesService.updateEmployees(this.sortedData);
   }
 
   ngOnDestroy() {

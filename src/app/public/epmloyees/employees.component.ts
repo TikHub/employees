@@ -18,14 +18,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import {
   debounceTime,
-  delay,
   distinctUntilChanged,
-  filter,
-  from,
-  fromEvent,
   map,
-  of,
-  pluck,
   Subject,
   Subscription,
   switchMap,
@@ -54,7 +48,8 @@ export class EmployeesComponent implements OnInit, OnDestroy, AfterViewInit {
 
   displayedColumns = ['firstName', 'lastName', 'company', 'salary', 'actions'];
   dataSource!: MatTableDataSource<any>;
-  keyUpSubscription: Subscription;
+  keyUp = new Subject<KeyboardEvent>();
+  subscription: Subscription;
   sortedData: Employee[];
 
   @ViewChild('paginator') paginator!: MatPaginator;
@@ -86,23 +81,21 @@ export class EmployeesComponent implements OnInit, OnDestroy, AfterViewInit {
       .subscribe((res: Employee[]) => {
         this.dataSource = new MatTableDataSource(res);
       });
-  }
 
-  ngAfterViewInit(): void {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.matSort;
-    // RECHECK
-    this.keyUpSubscription = fromEvent(this.search.nativeElement, 'keyup')
+    this.subscription = this.keyUp
       .pipe(
-        map((event: Event) => {
-          return (<HTMLInputElement>event.target).value;
-        }),
-        debounceTime(500),
+        map((event: KeyboardEvent) => (<HTMLInputElement>event.target).value),
+        debounceTime(1000),
         distinctUntilChanged()
       )
       .subscribe((data: string) => {
         this.dataSource.filter = data;
       });
+  }
+
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.matSort;
   }
 
   private setPageMode(): void {
@@ -185,22 +178,6 @@ export class EmployeesComponent implements OnInit, OnDestroy, AfterViewInit {
     };
   }
 
-  filterData($event: KeyboardEvent): void {
-    // fromEvent(this.searchField.nativeElement, 'input')
-    //   .pipe(
-    //     map((event: any) => event.target.value),
-    // pluck('target', 'value'),
-    // filter((searchValue: any) => searchValue.length > 1),
-    //   debounceTime(500),
-    //   distinctUntilChanged()
-    // )
-    // .subscribe((res) => {
-    //   console.log(res);
-    //   this.dataSource.filter = res;
-    // });
-    // this.dataSource.filter = $event.target.value;
-  }
-
   onSubmit(employee: Employee) {
     employee.id = this.selectedEmployeeId;
     if (this.pageMode === 1) {
@@ -266,5 +243,6 @@ export class EmployeesComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnDestroy() {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
+    this.subscription.unsubscribe();
   }
 }

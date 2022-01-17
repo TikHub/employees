@@ -12,9 +12,6 @@ export class DialogService {
     return this.dialog.open(MatConfirmDialogComponent, {
       width: '400px',
       panelClass: 'confirm-dialog-container',
-      // position: {
-      //   top: '0px',
-      // },
       disableClose: true,
       data: {
         message: msg,

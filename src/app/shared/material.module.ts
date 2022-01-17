@@ -17,13 +17,6 @@ import { MatTableModule } from '@angular/material/table';
 import { MatCardModule } from '@angular/material/card';
 import { MatSelectModule } from '@angular/material/select';
 
-// import {DataService} from './services/data.service';
-// import {AddDialogComponent} from './dialogs/add/add.dialog.component';
-// import {EditDialogComponent} from './dialogs/edit/edit.dialog.component';
-// import {DeleteDialogComponent} from './dialogs/delete/delete.dialog.component';
-// import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-// import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-
 const matModules = [
   MatGridListModule,
   MatProgressSpinnerModule,

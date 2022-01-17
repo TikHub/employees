@@ -122,13 +122,10 @@ export class EmployeesComponent implements OnInit, OnDestroy, AfterViewInit {
   private getDetailsData() {
     this.activatedRoute.paramMap
       .pipe(
-        tap((params) => {
-          // strictNullChecks
-          // this.selectedEmployeeId = +params.get('id');
+        tap((params: ParamMap) => {
           this.selectedEmployeeId = +(<string>params.get('id'));
         }),
-        // switchMapTo
-        switchMap(() => {
+        switchMap((params: ParamMap) => {
           return this.employeesService.getEmployeeById(this.selectedEmployeeId);
         })
       )

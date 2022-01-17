@@ -6,13 +6,7 @@ import { SharedModule } from '../shared/shared.module';
 import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
-  declarations: [
-    PublicComponent,
-    // StaffComponent,
-    // AddDialogComponent,
-    // DeleteDialogComponent,
-    // EditDialogComponent,
-  ],
+  declarations: [PublicComponent],
   imports: [
     CommonModule,
     PublicRoutingModule,

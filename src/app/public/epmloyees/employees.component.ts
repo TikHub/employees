@@ -125,7 +125,7 @@ export class EmployeesComponent implements OnInit, OnDestroy, AfterViewInit {
         tap((params: ParamMap) => {
           this.selectedEmployeeId = +(<string>params.get('id'));
         }),
-        switchMap((params: ParamMap) => {
+        switchMap(() => {
           return this.employeesService.getEmployeeById(this.selectedEmployeeId);
         })
       )

@@ -6,7 +6,12 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -27,9 +32,11 @@ import {
   takeUntil,
   tap,
 } from 'rxjs';
-import { PageModeEnum } from 'src/app/core/infrastructure/enums';
+import { PageModeEnum, Urls } from 'src/app/core/infrastructure/enums';
+import { EmployeeFormModel } from 'src/app/core/infrastructure/models';
 import { Employee } from 'src/app/core/infrastructure/models/employee.model';
 import { EmployeesService } from 'src/app/core/services/employees.service';
+import { compare } from 'src/app/shared/helper-functions';
 import { DialogService } from 'src/app/shared/services/dialog.service';
 
 @Component({
@@ -38,10 +45,10 @@ import { DialogService } from 'src/app/shared/services/dialog.service';
   styleUrls: ['./employees.component.scss'],
 })
 export class EmployeesComponent implements OnInit, OnDestroy, AfterViewInit {
-  form!: FormGroup;
+  form: FormGroup;
   selectedEmployee: Employee;
   selectedEmployeeId: number;
-  controls: any;
+  controls: EmployeeFormModel;
   pageMode: PageModeEnum;
   destroy$: Subject<boolean> = new Subject<boolean>();
 
@@ -52,7 +59,7 @@ export class EmployeesComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @ViewChild('paginator') paginator!: MatPaginator;
   @ViewChild(MatSort) matSort!: MatSort;
-  @ViewChild('search') search!: ElementRef;
+  @ViewChild('search') search!: ElementRef<HTMLInputElement>;
 
   constructor(
     private router: Router,
@@ -64,11 +71,7 @@ export class EmployeesComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit() {
     this.setPageMode();
-    this.employeesService.employees$.subscribe((response: Employee[]) => {
-      this.dataSource = new MatTableDataSource(response);
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.matSort;
-    });
+
     switch (this.pageMode) {
       case PageModeEnum.list:
         this.getInintialDetailsData();
@@ -77,35 +80,29 @@ export class EmployeesComponent implements OnInit, OnDestroy, AfterViewInit {
         this.getDetailsData();
         break;
     }
+
     this.employeesService.employees$
       .pipe(takeUntil(this.destroy$))
-      .subscribe((res) => {
+      .subscribe((res: Employee[]) => {
         this.dataSource = new MatTableDataSource(res);
       });
   }
 
   ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.matSort;
     // RECHECK
     this.keyUpSubscription = fromEvent(this.search.nativeElement, 'keyup')
       .pipe(
-        debounceTime(500),
-        map((event: any) => {
+        map((event: Event) => {
           return (<HTMLInputElement>event.target).value;
         }),
-        // tap((el: string) => console.log('ELEMENT', el)),
-        distinctUntilChanged(),
-        switchMap((data: string) => {
-          return this.filterDataSource(data);
-        })
+        debounceTime(500),
+        distinctUntilChanged()
       )
       .subscribe((data: string) => {
-        console.log('data: ', data, this.dataSource.data);
         this.dataSource.filter = data;
       });
-  }
-
-  filterDataSource(data: string) {
-    return of(data);
   }
 
   private setPageMode(): void {
@@ -181,10 +178,10 @@ export class EmployeesComponent implements OnInit, OnDestroy, AfterViewInit {
 
   setControls() {
     this.controls = {
-      firstName: this.form.get('firstName'),
-      lastName: this.form.get('lastName'),
-      company: this.form.get('company'),
-      salary: this.form.get('salary'),
+      firstName: <FormControl>this.form.get('firstName'),
+      lastName: <FormControl>this.form.get('lastName'),
+      company: <FormControl>this.form.get('company'),
+      salary: <FormControl>this.form.get('salary'),
     };
   }
 
@@ -206,7 +203,6 @@ export class EmployeesComponent implements OnInit, OnDestroy, AfterViewInit {
 
   onSubmit(employee: Employee) {
     employee.id = this.selectedEmployeeId;
-    // this.setPageMode();
     if (this.pageMode === 1) {
       const date = new Date();
       employee.id = date.getTime();
@@ -216,12 +212,14 @@ export class EmployeesComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     this.form.reset();
-    this.router.navigate([`employees/`]);
+    this.router.navigate([`${Urls.Employees}/`]);
   }
 
-  edit(ev: MouseEvent, employee: Employee) {
+  edit(event: MouseEvent, employee: Employee) {
     const id = employee.id;
-    this.router.navigate([`employees/edit/${id}`]);
+    this.router.navigate([
+      `${Urls.Employees}/${PageModeEnum[PageModeEnum.edit]}/${id}`,
+    ]);
   }
 
   removalRequest(el: Employee) {
@@ -238,7 +236,7 @@ export class EmployeesComponent implements OnInit, OnDestroy, AfterViewInit {
   remove(el: Employee) {
     this.employeesService.removeEmployeeById(el.id);
     this.form.reset();
-    this.router.navigate([`employees/`]);
+    this.router.navigate([`${Urls.Employees}/`]);
   }
 
   sortData(sort: Sort) {
@@ -269,8 +267,4 @@ export class EmployeesComponent implements OnInit, OnDestroy, AfterViewInit {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
   }
-}
-
-function compare(a: number | string, b: number | string, isAsc: boolean) {
-  return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
 }

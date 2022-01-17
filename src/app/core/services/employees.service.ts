@@ -16,7 +16,7 @@ export class EmployeesService {
 
   updateEmployee(employee: Employee): void {
     let item: Employee = <Employee>(
-      this.employeeList$.value.find((empl: Employee) => (empl.id = employee.id))
+      this.employeeList$.value.find((empl: Employee) => empl.id === employee.id)
     );
     Object.assign(item, employee);
   }

@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SharedModule } from '../../shared/shared.module';
+import { SharedModule } from '@shared/shared.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { EmployeesComponent } from '../epmloyees/employees.component';
 import { EmployeeRoutingModule } from './employee-routing.module';
-import { EmployeesService } from 'src/app/core/services/employees.service';
+import { EmployeesService } from '@core/services/employees.service';
 
 // import { StaffComponent } from './staff/staff.component';
 // import { AddDialogComponent } from './staff/dialogs/add/add.dialog.component';

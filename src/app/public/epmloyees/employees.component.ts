@@ -26,12 +26,12 @@ import {
   takeUntil,
   tap,
 } from 'rxjs';
-import { PageModeEnum, Urls } from 'src/app/core/infrastructure/enums';
-import { EmployeeFormModel } from 'src/app/core/infrastructure/models';
-import { Employee } from 'src/app/core/infrastructure/models/employee.model';
-import { EmployeesService } from 'src/app/core/services/employees.service';
-import { compare } from 'src/app/shared/helper-functions';
-import { DialogService } from 'src/app/shared/services/dialog.service';
+import { PageModeEnum, Urls } from '@core/infrastructure/enums';
+import { EmployeeFormModel } from '@core/infrastructure/models';
+import { Employee } from '@core/infrastructure/models/employee.model';
+import { EmployeesService } from '@core/services/employees.service';
+import { compare } from '@shared/helper-functions';
+import { DialogService } from '@shared/services/dialog.service';
 
 @Component({
   selector: 'app-employees',

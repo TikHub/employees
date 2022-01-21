@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import { Employee } from '../infrastructure/models/employee.model';
-import { employees } from 'src/app/shared/mocked-data';
+import { Employee } from '@core/infrastructure/models/employee.model';
+import { employees } from '@shared/mocked-data';
 
 @Injectable()
 export class EmployeesService {
